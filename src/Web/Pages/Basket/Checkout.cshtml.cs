@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Messaging.ServiceBus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,6 +8,8 @@ using Microsoft.eShopWeb.ApplicationCore.Exceptions;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 using Microsoft.eShopWeb.Infrastructure.Identity;
 using Microsoft.eShopWeb.Web.Interfaces;
+using Newtonsoft.Json;
+using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 namespace Microsoft.eShopWeb.Web.Pages.Basket;
 
@@ -19,11 +22,14 @@ public class CheckoutModel : PageModel
     private string _username = null;
     private readonly IBasketViewModelService _basketViewModelService;
     private readonly IAppLogger<CheckoutModel> _logger;
+    private readonly ServiceBusClient _serviceBusClient;
 
     public CheckoutModel(IBasketService basketService,
         IBasketViewModelService basketViewModelService,
         SignInManager<ApplicationUser> signInManager,
+        ServiceBusClient serviceBusClient,
         IOrderService orderService,
+
         IAppLogger<CheckoutModel> logger)
     {
         _basketService = basketService;
@@ -31,6 +37,7 @@ public class CheckoutModel : PageModel
         _orderService = orderService;
         _basketViewModelService = basketViewModelService;
         _logger = logger;
+        _serviceBusClient = serviceBusClient;
     }
 
     public BasketViewModel BasketModel { get; set; } = new BasketViewModel();
@@ -42,6 +49,9 @@ public class CheckoutModel : PageModel
 
     public async Task<IActionResult> OnPost(IEnumerable<BasketItemViewModel> items)
     {
+        //string serviceBusConnectionString = "Endpoint=sb://eshoponweb-sgk.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=NrC02pXX+F9xv4GyE1Z+LjPBDbEhc3KkosNLm7l+Xl0=";
+        string queueName = "default-queue";
+        await using ServiceBusSender sender = _serviceBusClient.CreateSender(queueName);
         try
         {
             await SetBasketModelAsync();
@@ -55,6 +65,14 @@ public class CheckoutModel : PageModel
             await _basketService.SetQuantities(BasketModel.Id, updateModel);
             await _orderService.CreateOrderAsync(BasketModel.Id, new Address("123 Main St.", "Kent", "OH", "United States", "44240"));
             await _basketService.DeleteBasketAsync(BasketModel.Id);
+
+            // add HTTP call to Azure function for reserving order in blob storage
+            var jsonText = "{\"name\":\"" + DateTime.Now.ToString("u") + "\",";
+            jsonText += "\"body\": " + JsonConvert.SerializeObject(items.Select(x => new { Id = x.Id.ToString(), Quantity = x.Quantity })) + "}";
+
+            var messageBody = jsonText;
+            var message = new ServiceBusMessage(messageBody);
+            await sender.SendMessageAsync(message);
         }
         catch (EmptyBasketOnCheckoutException emptyBasketOnCheckoutException)
         {

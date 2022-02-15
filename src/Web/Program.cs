@@ -15,6 +15,7 @@ using Microsoft.eShopWeb.Infrastructure.Identity;
 using Microsoft.eShopWeb.Web;
 using Microsoft.eShopWeb.Web.Configuration;
 using Microsoft.eShopWeb.Web.HealthChecks;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -91,6 +92,13 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<ToastService>();
 builder.Services.AddScoped<HttpService>();
 builder.Services.AddBlazorServices();
+
+builder.Services.AddAzureClients(b =>
+{
+    b.AddServiceBusClient(builder.Configuration
+        .GetSection("ConnectionStrings")
+        .GetSection("ServiceBusConnection").Value);
+});
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
