@@ -42,6 +42,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApiIntegrationTests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderItemsReserver", "src\OrderItemsReserver\OrderItemsReserver.csproj", "{C8EEEE24-E32A-4DF7-8B8E-FD5A03864831}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryOrderProcessor", "src\DeliveryOrderProcessor\DeliveryOrderProcessor.csproj", "{B7A42163-1F15-4505-9569-5E94688F516B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,6 +98,10 @@ Global
 		{C8EEEE24-E32A-4DF7-8B8E-FD5A03864831}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8EEEE24-E32A-4DF7-8B8E-FD5A03864831}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8EEEE24-E32A-4DF7-8B8E-FD5A03864831}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7A42163-1F15-4505-9569-5E94688F516B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7A42163-1F15-4505-9569-5E94688F516B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7A42163-1F15-4505-9569-5E94688F516B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7A42163-1F15-4505-9569-5E94688F516B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +118,7 @@ Global
 		{715CF7AF-A1EE-40A6-94A0-8DA3F3B2CAE9} = {419A6ACE-0419-4315-A6FB-B0E63D39432E}
 		{D53EF010-8F8C-4337-A059-456E19D8AE63} = {15EA4737-125B-4E6E-A806-E13B7EBCDCCF}
 		{C8EEEE24-E32A-4DF7-8B8E-FD5A03864831} = {419A6ACE-0419-4315-A6FB-B0E63D39432E}
+		{B7A42163-1F15-4505-9569-5E94688F516B} = {419A6ACE-0419-4315-A6FB-B0E63D39432E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {49813262-5DA3-4D61-ABD3-493C74CE8C2B}
